@@ -1,0 +1,77 @@
+module pipe(
+	input clk,
+	input rst_n,
+	input valid_i,
+	input ready_i,
+	input [7:0]data_i,
+	output valid_o,
+	output ready_o,
+	output [7:0]data_o
+    );
+
+reg valid_pipe;
+reg [7:0]data_pipe;
+
+reg ready_buf;
+assign ready_o=ready_buf;
+
+reg [7:0]data_buf;
+reg valid_buf;
+assign valid_o=valid_buf;
+assign data_o=data_buf;
+reg [1:0] sig;
+
+always@(posedge clk or negedge rst_n)
+begin
+	if(!rst_n)
+	begin
+		sig<=0;
+		valid_buf<=0;
+		data_buf<=0;
+		ready_buf<=1;
+	end
+	else
+	begin
+	case(sig)
+	2'b00:
+	begin
+		valid_pipe<=0;
+		data_pipe<=0;
+		ready_buf<=1;
+		sig<=2'b01;
+	end
+	2'b01:
+	begin
+		if(valid_i)
+		begin
+			valid_pipe<=valid_i;
+			data_pipe<=data_i;
+			ready_buf<=0;
+			sig<=2'b10;
+		end
+	end
+	2'b10:
+	begin
+		if(ready_i)
+		begin
+			data_buf<=data_pipe;
+			valid_buf<=valid_pipe;
+			ready_buf<=ready_i;
+			sig<=2'b11;
+		end
+		else
+		begin
+			valid_pipe<=valid_pipe;
+			data_pipe<=data_pipe;
+			ready_buf<=ready_i;
+		end
+	end
+	2'b11:
+	begin
+		valid_pipe<=0;
+		data_pipe<=8'h00;
+	end
+	endcase
+end	
+
+endmodule
