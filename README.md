@@ -1,1 +1,3 @@
 # handshake-module
+此设计完成了在valid信号上进行打一拍，是基于不需要打拍的代码上增加了pipe.v模块实现的。
+但是出现了在pipe模块输出数据的时候与destination之间出现了延迟。目前尚未解决。
