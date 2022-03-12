@@ -1,0 +1,44 @@
+module top(
+	input clk,
+	input rst_n,
+	input en_source,
+	input en_destination,
+	input [7:0]data_in,
+	output [7:0] data_test
+    );
+
+wire ready_i,valid_i,ready_o,valid_o;
+wire [7:0]data_i;
+wire [7:0]data_o;
+
+source_pipe v1(
+.rst_n(rst_n),
+.en(en_source),
+.clk(clk),
+.ready(ready_o),
+.data_in(data_in),
+.valid(valid_i),
+.data(data_i)
+);
+
+destination v2(
+.rst_n(rst_n),
+.en(en_destination),
+.clk(clk),
+.valid(valid_o),
+.data(data_o),
+.ready(ready_i),
+.data_out(data_test)
+);
+
+pipe v3(
+.clk(clk),
+.rst_n(rst_n),
+.valid_i(valid_i),
+.ready_i(ready_i),
+.data_i(data_i),
+.valid_o(valid_o),
+.ready_o(ready_o),
+.data_o(data_o)
+);
+endmodule
