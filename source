@@ -1,0 +1,34 @@
+module source_pipe(
+	input rst_n,
+	input en,
+    input clk,
+    input ready,
+	input [7:0]data_in,
+    output valid,
+    output [7:0] data
+    );
+
+reg [7:0]data_temp;
+reg valid;
+assign data=data_temp;
+
+always@(posedge clk or negedge rst_n)
+begin
+	if(!rst_n)
+	begin
+		data_temp<=8'h00;
+		valid<=0;
+	end
+	else
+	begin
+		if(en)
+		begin
+			valid<=1;
+			data_temp<=data_in;
+		end
+		else
+			valid<=0;
+	end
+end
+
+endmodule
